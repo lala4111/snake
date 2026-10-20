@@ -16,7 +16,8 @@
     <h1>Snake</h1>
     <canvas id="gameCanvas" width="400"
             height="400"></canvas>
-    <p id="info"></p>
+    <p id="info">Score: 0 </p>
+
 
     <script>
         // ===== GAME SETUP =====
@@ -72,27 +73,42 @@
         function movement(){
             //Read the current head
             const head = { ...snake[0] };
+            let info = document.getElementById("info");
             //Create a new position object
             head.x += direction.x;
             head.y += direction.y;
             //Add that new position to the front of snake
             snake.unshift(head);
             //Remove the last segment
-            snake.pop();
+            let  match = false;
+            if((head.x=== food.x)&&(head.y === food.y)){
+            match = true;}
+
+            if(match === false){
+                snake.pop();
+            }
+            else{
+                score++; 
+                info.textContent = "Score:" +score;
+                changeFoodPosition();}
             //Call drawGame()
+
             drawGame();
+            
 
             
 
+        
         }
-
+        //This gives the movement of the rectangle
         setInterval(movement, 200);
+        
 
         
 
         // Step 2: Keyboard controls (arrow keys)
         //create an event listener when key is pressed
-
+        //this creates how to move the rectangle
         document.addEventListener('keydown', function (e) {
             const click = e.key;
             let newDirection = { x: 0, y: 0 };
@@ -121,12 +137,33 @@
 
         });
         // Step 3: Eating and growing
+        /*let  match = false;
+
+        if((head.x=== food.x)&&(head.y === food.y)){
+            match = true;
+        }
+
+        if(match === false){
+            snake.pop();
+        }*/
+
+        function changeFoodPosition(){
+            food.x = Math.floor(Math.random()*tileCount);
+            food.y = Math.floor(Math.random()*tileCount);
+
+            food = {x: food.x, y: food.y}
+
+            
+            return food;
+        }
         // Step 4: Game over
         // Step 5: Improvements
         //
         // ===================================
 
     </script>
+
+    
 
 </body>
 </html>
