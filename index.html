@@ -14,6 +14,25 @@
 <body>
 
     <h1>Snake</h1>
+    <h2 id = "gameOver"></h2>
+    <button id="Restart"></button>
+    <style>
+        h2{
+            color:red;
+            font-size : 150pt;
+            text-align: center;
+        }
+
+    </style>
+    <style>
+        button{
+            color :blueviolet;
+            font-size: 75px;
+            margin : 0 auto;
+        }
+    </style>
+    
+    
     <canvas id="gameCanvas" width="400"
             height="400"></canvas>
     <p id="info">Score: 0 </p>
@@ -70,17 +89,74 @@
         // Commit regularly.
         //
         // Step 1: Movement (game loop)
+        let button = document.getElementById("Restart");
+        let info = document.getElementById("info");
+        let gameOver = document.getElementById("gameOver");
+
         function movement(){
+            let  match = false;
+            
+            button.style.display = "none";
             //Read the current head
             const head = { ...snake[0] };
-            let info = document.getElementById("info");
+            
             //Create a new position object
             head.x += direction.x;
             head.y += direction.y;
+
+            
+            let collusion = false;
+
+            if(head.x === food.x && head.y === food.y){
+                match = true;
+            }
+
+            //other component of snake
+            
+
+            if((head.x >= tileCount )|| (head.y >= tileCount)|| (head.x <0)||(head.y<0)){
+
+                gameOver.textContent= "Game over"; 
+                button.style.display = "block"
+                button.innerText= "Restart";
+                clearInterval(gameInterval);
+                return;
+
+                
+            }
+
+            if(match){
+                
+                collusion = snake.some(segment => segment.x === head.x && segment.y === head.y);
+            }
+            else{
+                collusion = snake.slice(0,-1).some(segment => segment.x === head.x && segment.y === head.y);
+            }
+            // some() should be used to check the boolean value of the snake array Not forEach
+            /*if (snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+                gameOver.textContent = "Game over";
+                button.style.display = "block";
+                button.innerText = "Restart";
+                clearInterval(gameInterval);
+                return;
+            }*/
+
+            if(collusion){
+                gameOver.textContent = "Game over";
+                button.style.display = "block";
+                button.innerText = "Restart";
+                clearInterval(gameInterval);
+                return;
+            }
+                snake.unshift(head);
+            
+            
+                
+            
             //Add that new position to the front of snake
-            snake.unshift(head);
+            
             //Remove the last segment
-            let  match = false;
+            
             if((head.x=== food.x)&&(head.y === food.y)){
             match = true;}
 
@@ -101,9 +177,23 @@
         
         }
         //This gives the movement of the rectangle
-        setInterval(movement, 200);
+       let gameInterval = setInterval(movement,200);
         
-
+        button.addEventListener("click", () => {
+            button.style.display = "none";
+            gameOver.textContent = "";
+            food = {x: 15, y: 15};
+            snake = [
+                { x: 10, y: 10 },
+                { x: 9, y: 10 },
+                { x: 8, y: 10 }
+            ];
+            direction = {x:1, y:0};
+            score = 0;
+            info.textContent = "Score: 0";
+            gameInterval = setInterval(movement,200);
+            drawGame();
+        });
         
 
         // Step 2: Keyboard controls (arrow keys)
@@ -157,6 +247,7 @@
             return food;
         }
         // Step 4: Game over
+
         // Step 5: Improvements
         //
         // ===================================
