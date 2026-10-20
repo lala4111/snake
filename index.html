@@ -82,13 +82,18 @@
             //Call drawGame()
             drawGame();
 
+            
+
         }
 
-        setInterval(movement, 150);
+        setInterval(movement, 200);
+
+        
 
         // Step 2: Keyboard controls (arrow keys)
         //create an event listener when key is pressed
-        document.body.addEventListener('keydown', function (e) {
+
+        document.addEventListener('keydown', function (e) {
             const click = e.key;
             let newDirection = { x: 0, y: 0 };
 
@@ -105,10 +110,11 @@
                 case "ArrowDown":
                     newDirection = { x: 0, y: 1 };
                     break;
+                    //handle when the other keys are pressed 
                 default: return;
             }
 
-            if(!(direction.x == -newDirection.x) || !(direction.y == -newDirection.y)){
+            if(!(direction.x === -newDirection.x) || !(direction.y === -newDirection.y)){
                 direction.x = newDirection.x;
                 direction.y = newDirection.y;
             }
