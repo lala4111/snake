@@ -10,17 +10,33 @@
             border: 1px solid black;
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <h1>Snake</h1>
     <h2 id = "gameOver"></h2>
+    <p id="score"></p>
+    <p id ="bestScore"></p>
     <button id="Restart"></button>
     <style>
         h2{
             color:red;
-            font-size : 150pt;
+            font-size : 100pt;
             text-align: center;
+            font-family: "Press Start 2P", monospace;
+        }
+
+        #score {
+            text-align: center;
+            font-family: "Press Start 2P", monospace;
+            font-size: 30px;
+        }
+
+        #bestScore{
+            text-align: center;
+            font-family: "Press Start 2P", monospace;
+            font-size: 30px;
         }
 
     </style>
@@ -29,6 +45,7 @@
             color :blueviolet;
             font-size: 75px;
             margin : 0 auto;
+            font-family: "Press Start 2P", monospace;
         }
     </style>
     
@@ -45,6 +62,7 @@
         const ctx = canvas.getContext("2d");
         const gridSize = 20;
         const tileCount = canvas.width / gridSize;
+        let bestScore = 0;
 
         // ===== INITIAL STATE =====
         let snake = [
@@ -92,6 +110,11 @@
         let button = document.getElementById("Restart");
         let info = document.getElementById("info");
         let gameOver = document.getElementById("gameOver");
+        let finalScore = document.getElementById("score");
+        let best = document.getElementById("bestScore");
+        
+        //count how many food did the snake eat. Every 2 times it eats food it increases the level
+        let foodCount = 0; 
 
         function movement(){
             let  match = false;
@@ -115,11 +138,16 @@
             
 
             if((head.x >= tileCount )|| (head.y >= tileCount)|| (head.x <0)||(head.y<0)){
-
+                if(bestScore<= score){
+                    bestScore = score;
+                }
                 gameOver.textContent= "Game over"; 
                 button.style.display = "block"
+                finalScore.textContent = "Score  :" + score;
+                best.textContent = "Best Score  :"+ bestScore;
                 button.innerText= "Restart";
                 clearInterval(gameInterval);
+                foodCount = 0;
                 return;
 
                 
@@ -142,10 +170,17 @@
             }*/
 
             if(collusion){
+                if(bestScore<= score){
+                    bestScore = score;
+                }
                 gameOver.textContent = "Game over";
+                finalScore.textContent = "Score  " + score;
+                best.textContent = "Best Score  :"+ bestScore;
                 button.style.display = "block";
                 button.innerText = "Restart";
+                
                 clearInterval(gameInterval);
+                foodCount =0;
                 return;
             }
                 snake.unshift(head);
@@ -158,7 +193,20 @@
             //Remove the last segment
             
             if((head.x=== food.x)&&(head.y === food.y)){
-            match = true;}
+            match = true; 
+            foodCount++;
+
+            if (foodCount <= 2){clearInterval(gameInterval); gameInterval = setInterval(movement,200);}
+            else if (foodCount <= 4){clearInterval(gameInterval); gameInterval = setInterval(movement,150);}
+            else if(foodCount <= 6){clearInterval(gameInterval); gameInterval = setInterval(movement,120);}
+            else{clearInterval(gameInterval); gameInterval = setInterval(movement,100);}
+                
+        
+        
+        
+            }
+
+
 
             if(match === false){
                 snake.pop();
@@ -177,11 +225,17 @@
         
         }
         //This gives the movement of the rectangle
+    
        let gameInterval = setInterval(movement,200);
+       
+
+       
         
         button.addEventListener("click", () => {
             button.style.display = "none";
             gameOver.textContent = "";
+            finalScore.textContent = "";
+            
             food = {x: 15, y: 15};
             snake = [
                 { x: 10, y: 10 },
@@ -191,7 +245,10 @@
             direction = {x:1, y:0};
             score = 0;
             info.textContent = "Score: 0";
+            foodCount=0;
+            
             gameInterval = setInterval(movement,200);
+            
             drawGame();
         });
         
